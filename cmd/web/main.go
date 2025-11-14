@@ -1,11 +1,15 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 )
 
 func main() {
+	port := flag.String("port", "4000", "Port to run the web server on")
+	flag.Parse()
+
 	mux := http.NewServeMux() // Always declare this. Never use the default mux.
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
 	mux.Handle("GET /static/", http.StripPrefix("/static", fileServer))
@@ -15,7 +19,7 @@ func main() {
 	mux.HandleFunc("GET /snippet/create", snippetCreate)
 	mux.HandleFunc("POST /snippet/create", snippetCreatePost)
 
-	log.Print("Starting server on :4000")
-	err := http.ListenAndServe(":4000", mux)
+	log.Printf("Starting server on port %s", *port)
+	err := http.ListenAndServe(":"+*port, mux)
 	log.Fatal(err)
 }
