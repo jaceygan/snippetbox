@@ -10,17 +10,15 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type application struct {
-	logger *slog.Logger
-}
-
 func main() {
 	port := flag.String("port", "4000", "Port to run the web server on")
 	dsn := flag.String("dsn", "web:pass@/snippetbox?parseTime=true", "MySQL data source name")
 	flag.Parse()
 
-	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo, AddSource: true})) // &var returns memory address of var
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo, AddSource: true}))
 	// logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+
+	// &var returns memory address of var
 	app := &application{logger: logger}
 
 	db, err := openDB(*dsn)
