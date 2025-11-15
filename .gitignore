@@ -23,9 +23,11 @@ go.work
 .idea/
 *.swp
 *.swo
+*.log
 *~
 .DS_Store
 
 # Build output
 /bin/
 /dist/
+/tmp/
