@@ -7,8 +7,15 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/jaceygan/snippetbox/internal/models"
+
 	_ "github.com/go-sql-driver/mysql"
 )
+
+type application struct {
+	logger   *slog.Logger
+	snippets *models.SnippetModel
+}
 
 func main() {
 	port := flag.String("port", "4000", "Port to run the web server on")
@@ -18,17 +25,17 @@ func main() {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo, AddSource: true}))
 	// logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
-	// &var returns memory address of var
-	app := &application{logger: logger}
-
 	db, err := openDB(*dsn)
-
 	if err != nil {
 		logger.Error(err.Error())
 		os.Exit(1)
 	}
-
 	defer db.Close()
+
+	app := &application{
+		logger:   logger,
+		snippets: &models.SnippetModel{DB: db},
+	}
 
 	logger.Info("Starting server", slog.Any("port", *port)) // *port dereferences the pointer to get the actual value
 	err = http.ListenAndServe(":"+*port, app.routes())

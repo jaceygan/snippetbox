@@ -6,10 +6,6 @@ import (
 	"runtime/debug"
 )
 
-type application struct {
-	logger *slog.Logger
-}
-
 func (app *application) serverInfo(r *http.Request, message string) {
 	var (
 		method = r.Method
