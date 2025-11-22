@@ -1,11 +1,19 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"log/slog"
 	"net/http"
 	"runtime/debug"
+	"time"
 )
+
+func (app *application) newTemplateData(r *http.Request) templateData {
+	return templateData{
+		CurrentYear: time.Now().Year(),
+	}
+}
 
 func (app *application) render(w http.ResponseWriter, r *http.Request, status int, page string, data templateData) {
 	// Retrieve the appropriate template set from the cache based on the page
@@ -19,14 +27,17 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, status in
 		return
 	}
 
-	w.WriteHeader(status)
-
-	// Execute the template set and write the response body. Again, if there
-	// is any error we call the serverError() helper.
-	err := ts.ExecuteTemplate(w, "base", data)
+	// write the template to buffer first instead of directly to response writer
+	// this captures any template execution errors
+	buf := new(bytes.Buffer)
+	err := ts.ExecuteTemplate(buf, "base", data)
 	if err != nil {
 		app.serverError(w, r, err)
+		return
 	}
+
+	w.WriteHeader(status)
+	buf.WriteTo(w)
 }
 
 func (app *application) serverInfo(r *http.Request, message string) {
