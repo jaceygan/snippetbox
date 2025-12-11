@@ -26,7 +26,7 @@ type application struct {
 }
 
 func main() {
-	port := flag.String("port", "4000", "Port to run the web server on")
+	port := flag.String("port", ":4000", "Port to run the web server on")
 	dsn := flag.String("dsn", "web:pass@/snippetbox?parseTime=true", "MySQL data source name")
 	flag.Parse()
 
@@ -60,8 +60,14 @@ func main() {
 		sessionManager: sessionManager,
 	}
 
-	logger.Info("Starting server", slog.Any("port", *port)) // *port dereferences the pointer to get the actual value
-	err = http.ListenAndServe(":"+*port, app.routes())
+	srv := &http.Server{
+		Addr:     *port,
+		Handler:  app.routes(),
+		ErrorLog: slog.NewLogLogger(logger.Handler(), slog.LevelError),
+	}
+
+	logger.Info("Starting server", slog.Any("port", srv.Addr)) // *port dereferences the pointer to get the actual value
+	err = srv.ListenAndServe()
 	logger.Error(err.Error())
 	os.Exit(1)
 }
