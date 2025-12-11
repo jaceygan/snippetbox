@@ -51,6 +51,7 @@ func main() {
 	sessionManager := scs.New()
 	sessionManager.Store = mysqlstore.New(db)
 	sessionManager.Lifetime = 12 * time.Hour
+	sessionManager.Cookie.Secure = true
 
 	app := &application{
 		logger:         logger,
@@ -67,7 +68,7 @@ func main() {
 	}
 
 	logger.Info("Starting server", slog.Any("port", srv.Addr)) // *port dereferences the pointer to get the actual value
-	err = srv.ListenAndServe()
+	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 	logger.Error(err.Error())
 	os.Exit(1)
 }
