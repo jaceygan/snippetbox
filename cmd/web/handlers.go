@@ -10,6 +10,13 @@ import (
 	"github.com/jaceygan/snippetbox/internal/validator"
 )
 
+func (app *application) about(w http.ResponseWriter, r *http.Request) {
+	app.serverInfo(r, "About page requested")
+	data := app.newTemplateData(r)
+	app.render(w, r, http.StatusOK, "about.tmpl.html", data)
+
+}
+
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	app.serverInfo(r, "Home page requested")
 
@@ -71,6 +78,8 @@ func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request
 
 	err := app.decodePostForm(r, &form)
 	if err != nil {
+		// Debug: print decode error to help diagnose failing tests
+		fmt.Printf("decodePostForm error: %v\n", err)
 		app.clientError(w, http.StatusBadRequest)
 		return
 	}

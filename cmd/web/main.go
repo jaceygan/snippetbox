@@ -33,7 +33,6 @@ func main() {
 	flag.Parse()
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo, AddSource: true}))
-	// logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
 	db, err := openDB(*dsn)
 	if err != nil {
