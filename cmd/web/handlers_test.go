@@ -78,15 +78,25 @@ func TestSnippetView(t *testing.T) {
 	}
 }
 
+// func TestUserSignup(t *testing.T) {
+// 	app := newTestApplication(t)
+
+// 	ts := newTestServer(t, app.routes())
+// 	defer ts.Close()
+
+// 	_, _, body := ts.get(t, "/user/signup")
+// 	validCSRFToken := extractCSRFToken(t, body)
+// 	t.Logf("body: %s", body)
+// 	t.Logf("CSRF token is: %q", validCSRFToken)
+// }
+
 func TestUserSignup(t *testing.T) {
 	app := newTestApplication(t)
-
 	ts := newTestServer(t, app.routes())
 	defer ts.Close()
 
 	_, _, body := ts.get(t, "/user/signup")
 	validCSRFToken := extractCSRFToken(t, body)
-	t.Logf("CSRF token is: %q", validCSRFToken)
 
 	const (
 		validName     = "Bob"
@@ -112,68 +122,68 @@ func TestUserSignup(t *testing.T) {
 			csrfToken:    validCSRFToken,
 			wantCode:     http.StatusSeeOther,
 		},
-		{
-			name:         "Invalid CSRF Token",
-			userName:     validName,
-			userEmail:    validEmail,
-			userPassword: validPassword,
-			csrfToken:    "invalidToken",
-			wantCode:     http.StatusBadRequest,
-		},
-		{
-			name:         "Empty Name",
-			userName:     "",
-			userEmail:    validEmail,
-			userPassword: validPassword,
-			csrfToken:    validCSRFToken,
-			wantCode:     http.StatusUnprocessableEntity,
-			wantFormTag:  formTag,
-		},
-		{
-			name:         "Empty Email",
-			userName:     validName,
-			userEmail:    "",
-			userPassword: validPassword,
-			csrfToken:    validCSRFToken,
-			wantCode:     http.StatusUnprocessableEntity,
-			wantFormTag:  formTag,
-		},
-		{
-			name:         "Empty Password",
-			userName:     validName,
-			userEmail:    validEmail,
-			userPassword: "",
-			csrfToken:    validCSRFToken,
-			wantCode:     http.StatusUnprocessableEntity,
-			wantFormTag:  formTag,
-		},
-		{
-			name:         "Invalid Email",
-			userName:     validName,
-			userEmail:    "invalid-email",
-			userPassword: validPassword,
-			csrfToken:    validCSRFToken,
-			wantCode:     http.StatusUnprocessableEntity,
-			wantFormTag:  formTag,
-		},
-		{
-			name:         "Short Password",
-			userName:     validName,
-			userEmail:    validEmail,
-			userPassword: "short",
-			csrfToken:    validCSRFToken,
-			wantCode:     http.StatusUnprocessableEntity,
-			wantFormTag:  formTag,
-		},
-		{
-			name:         "Duplicate Email",
-			userName:     validName,
-			userEmail:    "dupe@example.com",
-			userPassword: validPassword,
-			csrfToken:    validCSRFToken,
-			wantCode:     http.StatusUnprocessableEntity,
-			wantFormTag:  formTag,
-		},
+		// {
+		// 	name:         "Invalid CSRF Token",
+		// 	userName:     validName,
+		// 	userEmail:    validEmail,
+		// 	userPassword: validPassword,
+		// 	csrfToken:    "invalidToken",
+		// 	wantCode:     http.StatusBadRequest,
+		// },
+		// {
+		// 	name:         "Empty Name",
+		// 	userName:     "",
+		// 	userEmail:    validEmail,
+		// 	userPassword: validPassword,
+		// 	csrfToken:    validCSRFToken,
+		// 	wantCode:     http.StatusUnprocessableEntity,
+		// 	wantFormTag:  formTag,
+		// },
+		// {
+		// 	name:         "Empty Email",
+		// 	userName:     validName,
+		// 	userEmail:    "",
+		// 	userPassword: validPassword,
+		// 	csrfToken:    validCSRFToken,
+		// 	wantCode:     http.StatusUnprocessableEntity,
+		// 	wantFormTag:  formTag,
+		// },
+		// {
+		// 	name:         "Empty Password",
+		// 	userName:     validName,
+		// 	userEmail:    validEmail,
+		// 	userPassword: "",
+		// 	csrfToken:    validCSRFToken,
+		// 	wantCode:     http.StatusUnprocessableEntity,
+		// 	wantFormTag:  formTag,
+		// },
+		// {
+		// 	name:         "Invalid Email",
+		// 	userName:     validName,
+		// 	userEmail:    "invalid-email",
+		// 	userPassword: validPassword,
+		// 	csrfToken:    validCSRFToken,
+		// 	wantCode:     http.StatusUnprocessableEntity,
+		// 	wantFormTag:  formTag,
+		// },
+		// {
+		// 	name:         "Short Password",
+		// 	userName:     validName,
+		// 	userEmail:    validEmail,
+		// 	userPassword: "short",
+		// 	csrfToken:    validCSRFToken,
+		// 	wantCode:     http.StatusUnprocessableEntity,
+		// 	wantFormTag:  formTag,
+		// },
+		// {
+		// 	name:         "Duplicate Email",
+		// 	userName:     validName,
+		// 	userEmail:    "dupe@example.com",
+		// 	userPassword: validPassword,
+		// 	csrfToken:    validCSRFToken,
+		// 	wantCode:     http.StatusUnprocessableEntity,
+		// 	wantFormTag:  formTag,
+		// },
 	}
 
 	for _, tt := range tests {

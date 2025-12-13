@@ -38,9 +38,6 @@ func newTestApplication(t *testing.T) *application {
 
 	sessionManager := scs.New()
 	sessionManager.Lifetime = 12 * time.Hour
-	// Use non-secure cookies for the test server to ensure cookies are sent
-	// by the test client (httptest.NewTLSServer).
-	sessionManager.Cookie.Secure = false
 
 	return &application{
 		logger:         slog.New(slog.NewTextHandler(io.Discard, nil)),
@@ -83,17 +80,15 @@ func (ts *testServer) get(t *testing.T, urlPath string) (int, http.Header, strin
 		t.Fatal(err)
 	}
 	body = bytes.TrimSpace(body)
-
-	// Debug: print cookies stored for this URL
-	if ts.Client().Jar != nil {
-		cookies := ts.Client().Jar.Cookies(rs.Request.URL)
-		t.Logf("cookies for %s: %+v", rs.Request.URL.String(), cookies)
-	}
+	// t.Logf("body: %q", body)
+	// validCSRFToken := extractCSRFToken(t, string(body))
+	// t.Logf("CSRF token is: %q", validCSRFToken)
 
 	return rs.StatusCode, rs.Header, string(body)
 }
 
 func (ts *testServer) postForm(t *testing.T, urlPath string, form url.Values) (int, http.Header, string) {
+
 	rs, err := ts.Client().PostForm(ts.URL+urlPath, form)
 	if err != nil {
 		t.Fatal(err)
