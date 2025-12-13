@@ -38,6 +38,7 @@ func newTestApplication(t *testing.T) *application {
 
 	sessionManager := scs.New()
 	sessionManager.Lifetime = 12 * time.Hour
+	sessionManager.Cookie.Secure = true
 
 	return &application{
 		logger:         slog.New(slog.NewTextHandler(io.Discard, nil)),
